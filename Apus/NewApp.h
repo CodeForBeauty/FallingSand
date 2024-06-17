@@ -4,8 +4,6 @@
 
 #include <cmath>
 
-#include <omp.h>
-
 
 bool operator> (ApusCore::Color a, float b) {
 	return a.r > b && a.g > b && a.b > b && a.a > b;
@@ -34,29 +32,28 @@ public:
 	GLFWwindow* win;
 
 	ApusCore::Color* sand;
-	int drawRadius = 50;
+	int drawRadius = 150;
 
 	ApusCore::Color currentColor = { 1, 1, 1, 1 };
 	bool colorSet = false;
 
 	void Start() override {
 		auto test = [](lm::vec2 pos, lm::vec2 uv) {
-			ApusCore::Color output = { 0, 0, 0, 1 };
+			ApusCore::Color output = { 0, 0, 0, 0 };
 			return output;
 		};
 
 
 		AddObject(&canvas);
 
-		window.ResizeViewport(350, 280);
-		std::cout << window.viewportWidth;
+		window.ResizeViewport(512, 460);
 		sand = new ApusCore::Color[window.viewportWidth * window.viewportHeight];
 		for (int x = 0; x < window.viewportWidth; x++) {
 			for (int y = 0; y < window.viewportHeight; y++) {
 				sand[x + window.viewportWidth * y] = { 0, 0, 0, 0};
 			}
 		}
-		canvas.GenerateTexture(test, false);
+		canvas.GenerateTexture(test, true);
 		win = window.GetWindow();
 	}
 
@@ -87,7 +84,7 @@ public:
 			ypos = (ypos / window.height) * window.viewportHeight;
 
 			if (!colorSet) {
-				currentColor = { RandomNumber(), RandomNumber(), RandomNumber() };
+				currentColor = { RandomNumber(), RandomNumber(), RandomNumber(), 1 };
 				colorSet = true;
 			}
 			GenerateSand(xpos, ypos);
@@ -125,9 +122,13 @@ public:
 	}
 
 	void LateTick() override {
+		if (glfwGetKey(win, GLFW_KEY_R)) {
+			renderer.SaveRender("testing/Render.png", ApusCore::jpeg);
+		}
 	}
 
 	void End() override {
+		delete[] sand;
 		App::End();
 	}
 };

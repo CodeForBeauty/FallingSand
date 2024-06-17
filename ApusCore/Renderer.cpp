@@ -24,22 +24,26 @@ void ApusCore::Renderer::SetBackground(float x, float y, float z, float w) {
 }
 
 void ApusCore::Renderer::SaveRender(const char* outputPath, ApusCore::ImageType imgType) {
-	unsigned char* data = new unsigned char[window->viewportWidth * window->viewportHeight * 3];
-	glReadPixels(0, 0, window->viewportWidth, window->viewportHeight, GL_RGB, GL_UNSIGNED_BYTE, data);
+	int stride = window->width * 3;
+	int width = (stride % 4) ? window->width + (4 - stride % 4) : window->width;
+	stride += (stride % 4) ? (4 - stride % 4) : 0;
+
+	unsigned char* data = new unsigned char[width * window->height * 3];
+	glReadPixels(0, 0, width, window->height, GL_RGB, GL_UNSIGNED_BYTE, data);
 
 	switch (imgType)
 	{
 	case ApusCore::png:
-		stbi_write_png(outputPath, window->viewportWidth, window->viewportHeight, 3, data, window->viewportWidth * 3);
+		stbi_write_png(outputPath, width, window->height, 3, data, stride);
 		break;
 	case ApusCore::jpeg:
-		stbi_write_jpg(outputPath, window->viewportWidth, window->viewportHeight, 3, data, window->viewportWidth * 3);
+		stbi_write_jpg(outputPath, width, window->height, 3, data, 100);
 		break;
 	case ApusCore::bmp:
-		stbi_write_bmp(outputPath, window->viewportWidth, window->viewportHeight, 3, data);
+		stbi_write_bmp(outputPath, width, window->height, 3, data);
 		break;
 	case ApusCore::tga:
-		stbi_write_tga(outputPath, window->viewportWidth, window->viewportHeight, 3, data);
+		stbi_write_tga(outputPath, width, window->height, 3, data);
 		break;
 	}
 

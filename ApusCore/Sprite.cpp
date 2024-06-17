@@ -169,7 +169,6 @@ ApusCore::ScreenOverlay::ScreenOverlay(Window* window) : Mesh(6), window(window)
 void ApusCore::ScreenOverlay::GenerateTexture(std::function<Color(lm::vec2 pos, lm::vec2 uv)> func, bool hasAlpha) {
 	material.tex.width = window->viewportWidth;
 	material.tex.height = window->viewportHeight;
-	std::cout << window->viewportWidth << " " << window->viewportHeight;
 	material.tex.Generate(func, hasAlpha);
 }
 

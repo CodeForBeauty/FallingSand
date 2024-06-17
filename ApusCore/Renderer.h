@@ -6,6 +6,8 @@
 
 #include <list>
 
+#include <stb/stb_image_write.h>
+
 #include "Sprite.h"
 #include "Window.h"
 #include "Types.h"
@@ -20,6 +22,7 @@ namespace ApusCore {
 		std::vector<Empty*> sprites;
 
 		Renderer(Window* window) : window(window) {
+			stbi_flip_vertically_on_write(true);
 			if (!glfwInit())
 				throw std::exception("Error: initializing glfw");
 		}
