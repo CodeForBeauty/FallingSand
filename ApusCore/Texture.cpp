@@ -4,6 +4,7 @@
 #include <stb/stb_image_write.h>
 
 
+
 void ApusCore::Texture::UpdateData() {
 	Bind();
 
@@ -66,6 +67,7 @@ void ApusCore::Texture::Regenerate(std::function<Color(lm::vec2 pos, lm::vec2 uv
 	if (channels < 3 || width == 0 || height == 0)
 		return;
 	unsigned char* newData = new unsigned char[width * height * channels];
+#pragma omp parallel for
 	for (int i = 0; i < width; i++) {
 		for (int j = 0; j < height; j++) {
 			Color previous = GetPixel(i, j);

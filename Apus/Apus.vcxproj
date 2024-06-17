@@ -95,6 +95,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>Default</LanguageStandard>
       <AdditionalIncludeDirectories>$(SolutionDir)Dependecies\include;$(SolutionDir)ApusCore</AdditionalIncludeDirectories>
+      <OpenMPSupport>true</OpenMPSupport>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -139,6 +140,7 @@ xcopy /I /s /y "$(SolutionDir)ApusCore/shaders" "$(SolutionDir)Apus/shaders"</Co
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>Default</LanguageStandard>
       <AdditionalIncludeDirectories>$(SolutionDir)Dependecies\include;$(SolutionDir)ApusCore</AdditionalIncludeDirectories>
+      <OpenMPSupport>true</OpenMPSupport>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
