@@ -5,14 +5,37 @@
 #include <cmath>
 
 
+bool operator> (ApusCore::Color a, float b) {
+	return a.r > b && a.g > b && a.b > b && a.a > b;
+}
+bool operator< (ApusCore::Color a, float b) {
+	return a.r < b && a.g < b && a.b < b && a.a < b;
+}
+bool operator== (ApusCore::Color a, float b) {
+	return a.r == b && a.g == b && a.b == b && a.a == b;
+}
+
+bool operator> (ApusCore::Color a, int b) {
+	return a.r > b && a.g > b && a.b > b && a.a > b;
+}
+bool operator< (ApusCore::Color a, int b) {
+	return a.r < b && a.g < b && a.b < b && a.a < b;
+}
+bool operator== (ApusCore::Color a, int b) {
+	return a.r == b && a.g == b && a.b == b && a.a == b;
+}
+
 class NewApp : public ApusCore::App {
 public:
 	ApusCore::ScreenOverlay canvas = ApusCore::ScreenOverlay(&window);
 
 	GLFWwindow* win;
 
-	bool* sand;
+	ApusCore::Color* sand;
 	int drawRadius = 10;
+
+	ApusCore::Color currentColor = { 1, 1, 1, 1 };
+	bool colorSet = false;
 
 	void Start() override {
 		auto test = [](lm::vec2 pos, lm::vec2 uv) {
@@ -25,10 +48,10 @@ public:
 
 		window.ResizeViewport(150, 150);
 		std::cout << window.viewportWidth;
-		sand = new bool[window.viewportWidth * window.viewportHeight];
+		sand = new ApusCore::Color[window.viewportWidth * window.viewportHeight];
 		for (int x = 0; x < window.viewportWidth; x++) {
 			for (int y = 0; y < window.viewportHeight; y++) {
-				sand[x + window.viewportWidth * y] = false;
+				sand[x + window.viewportWidth * y] = { 0, 0, 0, 0};
 			}
 		}
 		canvas.GenerateTexture(test, false);
@@ -43,9 +66,13 @@ public:
 				if ((i * i + j * j) >= drawRadius)
 					continue;
 				if (xpos >= 0 && ypos >= 0 && xpos < window.viewportWidth && ypos < window.viewportHeight)
-					sand[xpos + window.viewportWidth * ypos] = true;
+					sand[xpos + window.viewportWidth * ypos] = currentColor;
 			}
 		}
+	}
+
+	float RandomNumber() {
+		return rand();
 	}
 
 	void Tick() override {
@@ -57,37 +84,38 @@ public:
 			xpos = (xpos / window.width) * window.viewportWidth;
 			ypos = (ypos / window.height) * window.viewportHeight;
 
+			if (!colorSet) {
+				currentColor = { RandomNumber(), RandomNumber(), RandomNumber() };
+				colorSet = true;
+			}
 			GenerateSand(xpos, ypos);
+		}
+		else {
+			colorSet = false;
 		}
 
 		for (int x = 0; x < window.viewportWidth; x++) {
 			for (int y = 0; y < window.viewportHeight; y++) {
-				if (y == 0 || !sand[x + window.viewportWidth * y])
+				if (y == 0 || sand[x + window.viewportWidth * y] == 0)
 					continue;
-				if (!sand[x + window.viewportWidth * (y - 1)]) {
-					sand[x + window.viewportWidth * y] = false;
-					sand[x + window.viewportWidth * (y - 1)] = true;
+				if (sand[x + window.viewportWidth * (y - 1)] == 0 ) {
+					sand[x + window.viewportWidth * (y - 1)] = sand[x + window.viewportWidth * y];
+					sand[x + window.viewportWidth * y] = {};
 				}
-				else if (x > 0 && !sand[(x - 1) + window.viewportWidth * (y - 1)]) {
-					sand[x + window.viewportWidth * y] = false;
-					sand[(x - 1) + window.viewportWidth * (y - 1)] = true;
+				else if (x > 0 && sand[(x - 1) + window.viewportWidth * (y - 1)] == 0) {
+					sand[(x - 1) + window.viewportWidth * (y - 1)] = sand[x + window.viewportWidth * y];
+					sand[x + window.viewportWidth * y] = {};
 				}
-				else if (x < window.viewportWidth - 1 && !sand[(x + 1) + window.viewportWidth * (y - 1)]) {
-					sand[x + window.viewportWidth * y] = false;
-					sand[(x + 1) + window.viewportWidth * (y - 1)] = true;
+				else if (x < window.viewportWidth - 1 && 
+					sand[(x + 1) + window.viewportWidth * (y - 1)] == 0) {
+					sand[(x + 1) + window.viewportWidth * (y - 1)] = sand[x + window.viewportWidth * y];
+					sand[x + window.viewportWidth * y] = {};
 				}
 			}
 		}
 
 		auto generator = [this](lm::vec2 pos, lm::vec2 uv, ApusCore::Color previous) {
-			ApusCore::Color output;
-			if (sand[(int)(pos.x + window.viewportWidth * pos.y)]) {
-				output = { 1, 1, 1, 1 };
-			}
-			else {
-				output = { 0, 0, 0, 1 };
-			}
-			return output;
+			return sand[(int)(pos.x + window.viewportWidth * pos.y)];
 		};
 		canvas.RegenerateTexture(generator);
 

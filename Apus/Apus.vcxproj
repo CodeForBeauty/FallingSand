@@ -24,7 +24,7 @@
     <ProjectGuid>{01730ef9-4bce-4903-952c-f95afcbf1d00}</ProjectGuid>
     <RootNamespace>Apus</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-    <ProjectName>Apus</ProjectName>
+    <ProjectName>FallingSand</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
