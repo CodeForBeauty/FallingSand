@@ -105,7 +105,7 @@ public:
 			drawRadius++;
 		}
 		if (glfwGetKey(win, GLFW_KEY_MINUS)) {
-			drawRadius++;
+			drawRadius--;
 		}
 #pragma omp parallel for
 		for (int x = 0; x < window.viewportWidth; x++) {
