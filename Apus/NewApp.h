@@ -32,7 +32,7 @@ public:
 	GLFWwindow* win;
 
 	ApusCore::Color* sand;
-	int drawRadius = 150;
+	int drawRadius = 50;
 
 	ApusCore::Color currentColor = { 1, 1, 1, 1 };
 	bool colorSet = false;
@@ -46,7 +46,16 @@ public:
 
 		AddObject(&canvas);
 
-		window.ResizeViewport(512, 460);
+		int width = 0, height = 0;
+
+		while (width == 0 || height == 0) {
+			std::cout << "Enter canvas width: ";
+			std::cin >> width;
+			std::cout << "Enter canvas height: ";
+			std::cin >> height;
+		}
+
+		window.ResizeViewport(width, height);
 		sand = new ApusCore::Color[window.viewportWidth * window.viewportHeight];
 		for (int x = 0; x < window.viewportWidth; x++) {
 			for (int y = 0; y < window.viewportHeight; y++) {
@@ -91,6 +100,12 @@ public:
 		}
 		else {
 			colorSet = false;
+		}
+		if (glfwGetKey(win, GLFW_KEY_EQUAL)) {
+			drawRadius++;
+		}
+		if (glfwGetKey(win, GLFW_KEY_MINUS)) {
+			drawRadius++;
 		}
 #pragma omp parallel for
 		for (int x = 0; x < window.viewportWidth; x++) {
